@@ -1,0 +1,46 @@
+NAME
+
+cpan_bot.pl - an IRC CPAN Info bot
+
+DESCRIPTION
+
+An IRC bot to report recent uploads to PAUSE and provide
+information about CPAN authors/distributions/modules.
+
+USAGE
+
+    perl cpan_bot.pl
+
+CONFIG
+
+Edit the source:
+
+    my @Channels = ( '#zofbot'  );
+
+    ## CUSTOMIZE THESE
+    my $Do_NickServ = 0; # set to 1 to enable identify with NickServ
+    my $NickServ_Pass = 'NICKSERV_PASS';
+    my @PAUSE_Options = (
+        login   => 'PAUSE_LOGIN',
+        pass    => 'PAUSE_PASSWORD',
+        interval => 600,
+        channels => \@Channels,
+    );
+    my @CPANInfo_Options = (
+    );
+
+
+@PAUSE_Options is what to pass to
+POE::Component::IRC::Plugin::PAUSE::RecentUploads constructor.
+@CPANInfo_Options is what to pass to
+POE::Component::IRC::Plugin::CPAN::Info constructor.
+
+AUTHOR
+
+Zoffix Znet <zoffix@cpan.org>
+
+( http://zoffix.com, http://haslayout.net )
+
+LICENSE
+
+Same as Perl
