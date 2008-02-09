@@ -1,0 +1,11 @@
+Revision history for cpan_bot
+
+0.02    Sat 8 Feb 2008
+        fixed up some distro things (like abstract)
+        no changes in the functional part
+
+0.02    Fri 8 Feb 2008
+        added config file feature
+
+0.01    Date/time
+        First version, released on an unsuspecting world.

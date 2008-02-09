@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use POE qw(
     Component::IRC
@@ -171,7 +171,7 @@ sub _default {
 
 =head1 NAME
 
-cpan_bot.pl - an IRC CPAN Info bot
+cpan_bot - an IRC CPAN Info bot
 
 =head1 DESCRIPTION
 
