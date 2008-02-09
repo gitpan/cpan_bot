@@ -1,0 +1,20 @@
+--- #YAML:1.0
+name:                cpan_bot
+version:             0.02
+abstract:            ~
+license:             ~
+author:              
+    - Zoffix Znet <cpan@zoffix.com>
+generated_by:        ExtUtils::MakeMaker version 6.42
+distribution_type:   module
+requires:     
+    POE:                           0.9999
+    POE::Component::IRC:           5.56
+    POE::Component::IRC::Plugin::BotAddressed: 0
+    POE::Component::IRC::Plugin::Connector: 0
+    POE::Component::IRC::Plugin::CPAN::Info: 0.03
+    POE::Component::IRC::Plugin::NickReclaim: 0
+    POE::Component::IRC::Plugin::PAUSE::RecentUploads: 0.01
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3

@@ -1,46 +1,101 @@
-NAME
+=head1 NAME
 
 cpan_bot.pl - an IRC CPAN Info bot
 
-DESCRIPTION
+=head1 DESCRIPTION
 
 An IRC bot to report recent uploads to PAUSE and provide
 information about CPAN authors/distributions/modules.
 
-USAGE
+=head1 USAGE
 
     perl cpan_bot.pl
 
-CONFIG
+=head1 CONFIG
 
-Edit the source:
+The config file is a file containing a simple hashref which the
+script will C<do''> default location the script will
+look for is ~/.cpan_bot/config however the path can be changed
+via enviromental variable C<CPAN_BOT_DIR>, thus config file
+will be located at C<"$CPAN_BOT_DIR/config">
 
-    my @Channels = ( '#zofbot'  );
+The sample config file is as follows:
 
-    ## CUSTOMIZE THESE
-    my $Do_NickServ = 0; # set to 1 to enable identify with NickServ
-    my $NickServ_Pass = 'NICKSERV_PASS';
-    my @PAUSE_Options = (
-        login   => 'PAUSE_LOGIN',
-        pass    => 'PAUSE_PASSWORD',
-        interval => 600,
-        channels => \@Channels,
-    );
-    my @CPANInfo_Options = (
-    );
+    {
+        nick    => 'CPAN2',
+        server  => 'irc.freenode.net',
+        port    => 6667,
+        ircname => 'CPAN bot',
+        
+        do_nickserv   => 1,
+        nickserv_pass => 'passo-word',
+        channels      => [ '#zofbot' ],
+        PAUSE_options => [
+            store => '/home/zoffix/.cpan_bot/pause.data',
+            login   => 'ZOFFIX',
+            pass    => 'passo-word',
+            interval => 600,
+            channels => [ '#zofbot' ],
+        ],
+        CPANInfo_options => [
+            path    => '/home/zoffix/.cpan_bot/',
+        ],
+    }
 
+=over 10
 
-@PAUSE_Options is what to pass to
-POE::Component::IRC::Plugin::PAUSE::RecentUploads constructor.
-@CPANInfo_Options is what to pass to
-POE::Component::IRC::Plugin::CPAN::Info constructor.
+=item nick
 
-AUTHOR
+Bot's nickname. Note: PoCo::IRC::NickReclaim is used, thus if C<nick>
+is taken, bot will use C<nick> with an underscore appended.
+
+=item server
+
+The IRC server to connect to.
+
+=item port
+
+The port of IRC server to connect to.
+
+=item ircname
+
+Whatever it is, will be passed to POE::Component::IRC constructor as
+a value for 'ircname'
+
+=item do_nickserv
+
+This is was developed for FreeNode IRC network. If set to a true value
+will identify with services before joining any channels. Not tested
+on any other networks, make sure to set to C<0> if you can't identify
+or bot will not join anything.
+
+=item nickserv_pass
+
+Password to use for identification with NickServ. Ignored if
+C<do_nickserv> is set to a false value.
+
+=item channels
+
+Takes an arrayref of channels to join.
+
+=item PAUSE_options
+
+Takes an I<arrayref>, this is what to pass to
+L<POE::Component::IRC::Plugin::PAUSE::RecentUploads> constructor.
+
+=item CPANInfo_options
+ 
+Takes an I<arrayref>, this is what to pass to
+L<POE::Component::IRC::Plugin::CPAN::Info> constructor.
+
+=back
+
+=head1 AUTHOR
 
 Zoffix Znet <zoffix@cpan.org>
 
-( http://zoffix.com, http://haslayout.net )
+( L<http://zoffix.com>, L<http://haslayout.net> )
 
-LICENSE
+=head1 LICENSE
 
 Same as Perl
