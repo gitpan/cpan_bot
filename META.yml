@@ -1,15 +1,13 @@
-name: cpan_bot
-version: 0.03
-author:
-  - 'Zoffix Znet <zoffix@cpan.org>'
-abstract: 'an IRC CPAN Info bot'
-license: perl
-resources:
-  license: http://dev.perl.org/licenses/
-build_requires:
-  Test::More: 0
-  Test::Script: 1.02
-requires
+--- #YAML:1.0
+name:                cpan_bot
+version:             0.04
+abstract:            an IRC CPAN Info bot
+license:             ~
+author:              
+    - Zoffix Znet <zoffix@cpan.org>
+generated_by:        ExtUtils::MakeMaker version 6.42
+distribution_type:   module
+requires:     
     POE:                           0.9999
     POE::Component::IRC:           5.56
     POE::Component::IRC::Plugin::BotAddressed: 0
@@ -17,11 +15,8 @@ requires
     POE::Component::IRC::Plugin::CPAN::Info: 0.03
     POE::Component::IRC::Plugin::NickReclaim: 0
     POE::Component::IRC::Plugin::PAUSE::RecentUploads: 0.01
-provides:
-  cpan_bot:
-    file: cpan_bot.pl
-    version: 0.03
-generated_by: Module::Build version 0.2808
+    Test::More:                    0
+    Test::Script:                  1.02
 meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3

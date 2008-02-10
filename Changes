@@ -1,6 +1,10 @@
 Revision history for cpan_bot
 
-0.02    Sat 8 Feb 2008
+0.04    Sun 8 Feb 2008
+	fixed the shebang >_<
+		
+
+0.03    Sat 9 Feb 2008
         fixed up some distro things (like abstract)
         no changes in the functional part
 
