@@ -2,7 +2,7 @@ t/00-use.t
 t/01-compile.t
 Changes
 README
-cpan_bot.pl
+bin/cpan_bot.pl
 Makefile.PL
 MANIFEST
 META.yml                                 Module meta-data (added by MakeMaker)

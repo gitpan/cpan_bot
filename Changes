@@ -1,7 +1,12 @@
 Revision history for cpan_bot
 
+0.05    Sun 8 Feb 2008
+        Added PCIP::CPAN::LinksToDocs::No404s plugin,
+        fixed the incorrect timestamp on "..fetched new list ... PAUSE"
+        prints in the shell
+
 0.04    Sun 8 Feb 2008
-	fixed the shebang >_<
+	    fixed the shebang >_<
 		
 
 0.03    Sat 9 Feb 2008
