@@ -9,7 +9,7 @@ WriteMakefile(
      	'Test::Script'										=> 1.02,
         'POE'                                               => 0.9999,
         'POE::Component::IRC'                               => 5.56,
-        'POE::Component::IRC::Plugin::PAUSE::RecentUploads' => 0.01,
+        'POE::Component::IRC::Plugin::PAUSE::RecentUploads' => 0.04,
         'POE::Component::IRC::Plugin::CPAN::Info'           => 0.03,
         'POE::Component::IRC::Plugin::Connector'            => 0,
         'POE::Component::IRC::Plugin::NickReclaim'          => 0,

@@ -1,5 +1,8 @@
 Revision history for cpan_bot
 
+0.06    Mar 17, 2008
+        -changed prereqs to reflect bug fixes in modules
+
 0.05    Sun 8 Feb 2008
         Added PCIP::CPAN::LinksToDocs::No404s plugin,
         fixed the incorrect timestamp on "..fetched new list ... PAUSE"
