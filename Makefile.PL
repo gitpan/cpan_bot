@@ -14,7 +14,7 @@ WriteMakefile(
         'POE::Component::IRC::Plugin::Connector'            => 0,
         'POE::Component::IRC::Plugin::NickReclaim'          => 0,
         'POE::Component::IRC::Plugin::BotAddressed'         => 0,
-        'POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s' => 0.001,
+  'POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember' => 0.001,
      },
      EXE_FILES => [ 'bin/cpan_bot.pl' ],
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005

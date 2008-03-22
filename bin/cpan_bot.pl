@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use POE qw(
     Component::IRC
@@ -12,7 +12,7 @@ use POE qw(
     Component::IRC::Plugin::Connector
     Component::IRC::Plugin::NickReclaim
     Component::IRC::Plugin::BotAddressed
-    Component::IRC::Plugin::CPAN::LinksToDocs::No404s
+    Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember
 );
 
 my $configdir = $ENV{CPAN_BOT_DIR} || '';
@@ -86,7 +86,7 @@ sub _start {
 
     $irc->plugin_add(
         'CPANLinksToDocs' =>
-        POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s->new(
+      POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember->new(
             @CPANLinks_to_docs_options
         )
     );
@@ -279,7 +279,7 @@ L<POE::Component::IRC::Plugin::CPAN::Info> constructor.
 item CPANLinks_to_docs_options
 
 Takes an I<arrayref>, this is what to pass to
-L<POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s> constructor.
+L<POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember> constructor.
 
 =back
 
