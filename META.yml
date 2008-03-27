@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                cpan_bot
-version:             0.07
+version:             0.08
 abstract:            an IRC CPAN Info bot
 license:             ~
 author:              

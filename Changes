@@ -1,5 +1,8 @@
 Revision history for cpan_bot
 
+0.08    Mar 27, 2008
+        Fixed broken test suit
+
 0.07    Mar 22, 2008
         changed PCIP::CPAN::LinksToDocs::No404s to
         PCIP::CPAN::LinksToDocs::No404s::Remember so the stupid thing
