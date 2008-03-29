@@ -1,5 +1,8 @@
 Revision history for cpan_bot
 
+0.09    Mar 28, 2008
+        Added pasting list of uploads to pastebin when "flood" occurs
+
 0.08    Mar 27, 2008
         Fixed broken test suit
 

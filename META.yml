@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                cpan_bot
-version:             0.08
+version:             0.09
 abstract:            an IRC CPAN Info bot
 license:             ~
 author:              
@@ -15,7 +15,8 @@ requires:
     POE::Component::IRC::Plugin::CPAN::Info: 0.03
     POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember: 0.001
     POE::Component::IRC::Plugin::NickReclaim: 0
-    POE::Component::IRC::Plugin::PAUSE::RecentUploads: 0.04
+    POE::Component::IRC::Plugin::OutputToPastebin: 0.001
+    POE::Component::IRC::Plugin::PAUSE::RecentUploads: 0.05
     Test::More:                    0
     Test::Script:                  1.02
 meta-spec:

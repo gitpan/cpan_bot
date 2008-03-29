@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use POE qw(
     Component::IRC
@@ -13,6 +13,7 @@ use POE qw(
     Component::IRC::Plugin::NickReclaim
     Component::IRC::Plugin::BotAddressed
     Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember
+    Component::IRC::Plugin::OutputToPastebin
 );
 
 my $configdir = $ENV{CPAN_BOT_DIR} || '';
@@ -28,11 +29,18 @@ unless ( defined $config ) {
 my @Channels = @{ $config->{channels} };
 my $Do_NickServ = $config->{do_nickserv};
 my $NickServ_Pass = $config->{nickserv_pass};
-my @PAUSE_Options = @{ $config->{PAUSE_options} || [] };
+my %PAUSE_Options = @{ $config->{PAUSE_options} || [] };
 my @CPANInfo_Options = @{ $config->{CPANInfo_options} || [] };
+my @OutputToPastebin_Options
+= @{ $config->{OutputToPastebin_options} || [] };
 
 my @CPANLinks_to_docs_options
 = @{ $config->{CPANLinks_to_docs_options} || [] };
+
+
+# a little "fix" to make sure PAUSE plugin does not report stuff auto
+@PAUSE_Options{qw(fetched_event report_event quiet_flood)}
+= ( 'pause_uploads_list_event', 'pause_new_uploads_event', 1 );
 
 my $irc = POE::Component::IRC->spawn(
         nick    => $config->{nick},
@@ -52,7 +60,9 @@ POE::Session->create(
                 irc_notice
                 irc_public
                 irc_bot_addressed
+                irc_msg
                 pause_uploads_list
+                pause_new_uploads_event
             )
         ],
     ],
@@ -91,6 +101,12 @@ sub _start {
         )
     );
 
+    $irc->plugin_add(
+        'Paster' => POE::Component::IRC::Plugin::OutputToPastebin->new(
+            @OutputToPastebin_Options
+        )
+    );
+
     $irc->yield( connect => { } );
 
     $_[KERNEL]->delay( 'lag_o_meter' => 60 );
@@ -107,7 +123,7 @@ sub irc_001 {
         $irc->plugin_add(
             'PAUSE' =>
                 POE::Component::IRC::Plugin::PAUSE::RecentUploads->new(
-                    @PAUSE_Options
+                    %PAUSE_Options
                 )
         );
     }
@@ -120,6 +136,69 @@ sub irc_public {
 
 sub pause_uploads_list {
     print "\n[ " . localtime($_[ARG0]->{time}) . "] Fetched new list from PAUSE\n";
+}
+
+sub pause_new_uploads_event {
+    my $input = $_[ARG0];
+    if ( $input->{is_flood} and not $config->{no_pastebins} ) {
+        my $total_dists = @{ $input->{formatted_output} };
+
+        my $paste =  make_paste_data( $input->{data} );
+
+        # YES!! WE ARE TALKING TO OURSELVES!!! IS IT WRONG TO BE INSANE?
+        # DON"T JUDGE ME :( I"M JUST A BOT! :(
+        # but what we are really doing here is making just ONE
+        # paste and then we will repeat it to all channels.
+        # yes, this was not "tought of" properly while being made,
+        # but oh well...
+        $irc->yield( privmsg => $irc->nick_name =>
+            "Total of $total_dists were uploaded see: "
+            . "[irc_to_pastebin]$paste"
+        );
+    }
+}
+
+sub make_paste_data {
+    my $data_ref = shift;
+
+    my @dists = sort { $a->{name} cmp $b->{name} }
+                    @$data_ref;
+
+    my $longest_dist = 0;
+    my $longest_auth = 0;
+    for ( @dists ) {
+        $longest_dist = length $_->{dist}
+            if length $_->{dist} > $longest_dist;
+
+        $longest_auth = length $_->{name}
+            if length $_->{name} > $longest_auth;
+    }
+
+    $longest_dist += 4; # gimme some white spaces \o/
+    $longest_auth += 4;
+
+    my $paste = '+' . '-' x ($longest_dist+5+$longest_auth) . "+\n";
+
+    my $row_sep = "\n|" . '-' x ($longest_dist+2) . '+'
+                    . "-" x ($longest_auth+2) . "| \n";
+
+    $paste .= join $row_sep,
+        map {
+            sprintf "| %*s | %-*s |", $longest_dist, $_->{dist},
+                                $longest_auth, $_->{name},
+        } @dists;
+
+    $paste .= "\n+" . '-' x ($longest_dist+5+$longest_auth) . "+\n";
+
+    return $paste;
+}
+
+sub irc_msg {
+    my ( $who, $what ) = @_[ARG0, ARG2];
+    if ( (split /!/, $who)[0] eq $irc->nick_name ) {
+        #.... then call the crazy house... err. I mean do this:
+        $irc->yield( privmsg => $_ => $what ) for @Channels;
+    }
 }
 
 sub irc_bot_addressed {
@@ -150,7 +229,7 @@ sub irc_notice {
             $irc->plugin_add(
                 'PAUSE' =>
                     POE::Component::IRC::Plugin::PAUSE::RecentUploads->new(
-                        @PAUSE_Options
+                        %PAUSE_Options
                     )
             );
         }
@@ -211,6 +290,7 @@ The sample config file is as follows:
         server  => 'irc.freenode.net',
         port    => 6667,
         ircname => 'CPAN bot',
+        no_pastebins => 1,
         
         do_nickserv   => 1,
         nickserv_pass => 'passo-word',
@@ -226,16 +306,17 @@ The sample config file is as follows:
             path    => '/home/zoffix/.cpan_bot/',
         ],
         CPANLinks_to_docs_options => [
-            # nothing to see here :)
+            obj_args => { db_file => '/home/zoffix/.cpan_bot/links.db' }
         ],
+        OutputToPastebin_options => [ max_tries => 10 ],
     }
 
 =over 10
 
 =item nick
 
-Bot's nickname. Note: PoCo::IRC::NickReclaim is used, thus if C<nick>
-is taken, bot will use C<nick> with an underscore appended.
+Bot's nickname. Note: L<POE::Component::IRC::NickReclaim> is used,
+thus if C<nick> is taken, bot will use C<nick> with an underscore appended.
 
 =item server
 
@@ -249,6 +330,13 @@ The port of IRC server to connect to.
 
 Whatever it is, will be passed to POE::Component::IRC constructor as
 a value for 'ircname'
+
+=item no_pastebins
+
+When too many dists are uploaded plugin will say "Total of this many
+dists were uploaded see http://link_to_pastebin/blah"; set
+C<no_pastebins> option to a true value if you want to disable pastebinning
+of "flood" uploads.
 
 =item do_nickserv
 
@@ -269,17 +357,24 @@ Takes an arrayref of channels to join.
 =item PAUSE_options
 
 Takes an I<arrayref>, this is what to pass to
-L<POE::Component::IRC::Plugin::PAUSE::RecentUploads> constructor.
+L<POE::Component::IRC::Plugin::PAUSE::RecentUploads> constructor. Beware
+that C<fetched_event>, C<report_event> and C<quiet_flood> options are
+overriden by the bot.
 
 =item CPANInfo_options
  
 Takes an I<arrayref>, this is what to pass to
 L<POE::Component::IRC::Plugin::CPAN::Info> constructor.
 
-item CPANLinks_to_docs_options
+=item CPANLinks_to_docs_options
 
 Takes an I<arrayref>, this is what to pass to
 L<POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember> constructor.
+
+=item OutputToPastebin_options
+
+Takes an I<arrayref>, this is what to pass to
+L<Component::IRC::Plugin::OutputToPastebin> constructor
 
 =back
 
@@ -287,11 +382,6 @@ L<POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember> constructor.
 
 Zoffix Znet <zoffix@cpan.org>
 ( L<http://zoffix.com>, L<http://haslayout.net> )
-
-=head1 ACKNOWLEDGEMENTS
-
-Thanks to Juerd (L<http://tnx.nl/404>) for providing base code for
-CPA::LinksToDocs::No404s module.
 
 =head1 LICENSE
 
