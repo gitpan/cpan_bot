@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 use POE qw(
     Component::IRC
@@ -14,6 +14,7 @@ use POE qw(
     Component::IRC::Plugin::BotAddressed
     Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember
     Component::IRC::Plugin::OutputToPastebin
+    Component::IRC::Plugin::WWW::CPAN
 );
 
 my $configdir = $ENV{CPAN_BOT_DIR} || '';
@@ -37,6 +38,7 @@ my @OutputToPastebin_Options
 my @CPANLinks_to_docs_options
 = @{ $config->{CPANLinks_to_docs_options} || [] };
 
+my @WWW_CPAN_Options = @{ $config->{WWW_CPAN_Options} || [] };
 
 # a little "fix" to make sure PAUSE plugin does not report stuff auto
 @PAUSE_Options{qw(fetched_event report_event quiet_flood)}
@@ -91,6 +93,13 @@ sub _start {
         'CPANInfo' =>
         POE::Component::IRC::Plugin::CPAN::Info->new(
             @CPANInfo_Options
+        )
+    );
+
+    $irc->plugin_add(
+        'WWW_CPAN' =>
+        POE::Component::IRC::Plugin::WWW::CPAN->new(
+            @WWW_CPAN_Options
         )
     );
 
@@ -374,9 +383,35 @@ L<POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember> constructor.
 =item OutputToPastebin_options
 
 Takes an I<arrayref>, this is what to pass to
-L<Component::IRC::Plugin::OutputToPastebin> constructor
+L<POE::Component::IRC::Plugin::OutputToPastebin> constructor
+
+=item WWW_CPAN_Options
+
+Takes an I<arrayref>, this is what to pass
+L<POE::Component::IRC::Plugin::WWW::CPAN> constructor.
 
 =back
+
+=head1 SEE ALSO
+
+The functionality can be understood by reading at least the description
+of the following PoCo::IRC plugins which this bot uses:
+
+L<POE::Component::IRC::Plugin::PAUSE::RecentUploads>
+L<POE::Component::IRC::Plugin::CPAN::Info>
+L<POE::Component::IRC::Plugin::Connector>
+L<POE::Component::IRC::Plugin::NickReclaim>
+L<POE::Component::IRC::Plugin::BotAddressed>
+L<POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember>
+L<POE::Component::IRC::Plugin::OutputToPastebin>
+L<POE::Component::IRC::Plugin::WWW::CPAN>
+
+=head1 BUGS
+
+So far none were spotted. Once the bot didn't want to fetch any info
+files used by L<POE::Component::IRC::Plugin::CPAN::Info> on a FreeBSD box.
+Magically the bug disappeared after a reboot. I blame it on the box, but
+if you spot something similiar let me know. Thanks.
 
 =head1 AUTHOR
 

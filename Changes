@@ -1,5 +1,9 @@
 Revision history for cpan_bot
 
+0.10    Aug 2, 2008
+        Added POE::Component::IRC::Plugin::WWW::CPAN goodness
+        fixed up the docs
+
 0.09    Mar 28, 2008
         Added pasting list of uploads to pastebin when "flood" occurs
 
