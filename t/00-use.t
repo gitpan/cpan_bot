@@ -1,4 +1,4 @@
-use Test::More tests => 9;
+use Test::More tests => 10;
 
 BEGIN {
     use_ok('POE');
@@ -10,4 +10,5 @@ BEGIN {
     use_ok('POE::Component::IRC::Plugin::BotAddressed');
     use_ok('POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember');
     use_ok('POE::Component::IRC::Plugin::WWW::CPAN');
+    use_ok('POE::Component::IRC::Plugin::WWW::CPANRatings::RSS');
 }

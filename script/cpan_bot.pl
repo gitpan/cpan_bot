@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 use POE qw(
     Component::IRC
@@ -15,6 +15,7 @@ use POE qw(
     Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember
     Component::IRC::Plugin::OutputToPastebin
     Component::IRC::Plugin::WWW::CPAN
+    Component::IRC::Plugin::WWW::CPANRatings::RSS
 );
 
 my $configdir = $ENV{CPAN_BOT_DIR} || '';
@@ -43,6 +44,8 @@ my @WWW_CPAN_Options = @{ $config->{WWW_CPAN_Options} || [] };
 # a little "fix" to make sure PAUSE plugin does not report stuff auto
 @PAUSE_Options{qw(fetched_event report_event quiet_flood)}
 = ( 'pause_uploads_list_event', 'pause_new_uploads_event', 1 );
+
+my @WWW_CPANRatings_Options = @{ $config->{WWW_CPANRatings_Options} || [] };
 
 my $irc = POE::Component::IRC->spawn(
         nick    => $config->{nick},
@@ -100,6 +103,13 @@ sub _start {
         'WWW_CPAN' =>
         POE::Component::IRC::Plugin::WWW::CPAN->new(
             @WWW_CPAN_Options
+        )
+    );
+
+    $irc->plugin_add(
+        'WWW_CPAN_Ratings' =>
+        POE::Component::IRC::Plugin::WWW::CPANRatings::RSS->new(
+            @WWW_CPANRatings_Options
         )
     );
 
@@ -318,6 +328,10 @@ The sample config file is as follows:
             obj_args => { db_file => '/home/zoffix/.cpan_bot/links.db' }
         ],
         OutputToPastebin_options => [ max_tries => 10 ],
+        WWW_CPANRatings_Options => [
+            file => '/home/zoffix/.cpan_bot/cpan_ratings.store',
+            channels => [ '#zofbot' ],
+        ],
     }
 
 =over 10

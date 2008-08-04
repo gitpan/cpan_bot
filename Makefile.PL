@@ -16,6 +16,7 @@ WriteMakefile(
         'POE::Component::IRC::Plugin::BotAddressed'         => 0,
         'POE::Component::IRC::Plugin::OutputToPastebin'		=> 0.001,
         'POE::Component::IRC::Plugin::WWW::CPAN' 			=> 0.0101,
+        'POE::Component::IRC::Plugin::WWW::CPANRatings::RSS' => 0.0101,
   'POE::Component::IRC::Plugin::CPAN::LinksToDocs::No404s::Remember' => 0.001,
      },
      EXE_FILES => [ 'script/cpan_bot.pl' ],
